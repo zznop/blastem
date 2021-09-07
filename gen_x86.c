@@ -2010,6 +2010,7 @@ void call_noalign(code_info *code, code_ptr fun)
 		//TODO: Implement far call???
 		fatal_error("call: %p - %p = %lX which is out of range for a 32-bit displacement\n", fun, out + 5, (long)disp);
 	}
+
 	code->cur = out;
 }
 

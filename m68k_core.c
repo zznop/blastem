@@ -219,6 +219,7 @@ static void translate_m68k_jmp_jsr(m68k_options * opts, m68kinst * inst)
 	uint8_t sec_reg;
 	uint32_t after;
 	uint32_t m68k_addr;
+
 	switch(inst->src.addr_mode)
 	{
 	case MODE_AREG_INDIRECT:
@@ -646,6 +647,7 @@ static void translate_m68k_rte(m68k_options *opts, m68kinst *inst)
 code_ptr get_native_address(m68k_options *opts, uint32_t address)
 {
 	native_map_slot * native_code_map = opts->gen.native_code_map;
+	//printf("%08x\n", address);
 	
 	memmap_chunk const *mem_chunk = find_map_chunk(address, &opts->gen, 0, NULL);
 	if (mem_chunk) {

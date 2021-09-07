@@ -31,7 +31,7 @@ SDL2_PREFIX:="sdl/x86_64-w64-mingw32"
 GLUDIR:=x64
 endif
 GLEW32S_LIB:=$(GLEW_PREFIX)/lib/Release/$(GLUDIR)/glew32s.lib
-CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -Wpointer-arith -Werror=pointer-arith
+CFLAGS:=-std=gnu99 -Wreturn-type -Werror=return-type -Werror=implicit-function-declaration -Wpointer-arith -Werror=pointer-arith -I/usr/include/SDL
 LDFLAGS:=-lm -lmingw32 -lws2_32 -mwindows
 ifneq ($(MAKECMDGOALS),libblastem.dll)
 CFLAGS+= -I"$(SDL2_PREFIX)/include/SDL2" -I"$(GLEW_PREFIX)/include" -DGLEW_STATIC
@@ -234,7 +234,7 @@ MAINOBJS+= $(NUKLEAROBJS)
 endif
 
 ifeq ($(CPU),x86_64)
-CFLAGS+=-DX86_64 -m64
+CFLAGS+=-DX86_64 -m64 -I/usr/include/SDL2
 LDFLAGS+=-m64
 else
 ifeq ($(CPU),i686)

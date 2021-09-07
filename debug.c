@@ -1,6 +1,7 @@
 #include "debug.h"
 #include "genesis.h"
 #include "68kinst.h"
+#include "m68k_internal.h"
 #include <stdlib.h>
 #include <string.h>
 #ifndef _WIN32
@@ -585,6 +586,32 @@ z80_context * zdebugger(z80_context * context, uint16_t address)
 static uint32_t branch_t;
 static uint32_t branch_f;
 
+#define RAM_START 0xff0000
+#define RAM_OUTPUT_FILE "/tmp/ram.bin"
+#define RAM_SIZE 0xffff
+static void dump_memory(m68k_context *context)
+{
+	FILE *f = fopen(RAM_OUTPUT_FILE, "wbe");
+	if (!f) {
+		fprintf(stderr, "Failed to open file for memory dump: %s\n", RAM_OUTPUT_FILE);
+		return;
+	}
+
+	for (uint32_t i = RAM_START; i < RAM_START+RAM_SIZE; i += 4) {
+		uint32_t value = m68k_read_long(i, context);
+		int n = fwrite(&value, sizeof(value), 1, f);
+		if (n != 1) {
+			fprintf(stderr, "Failed to dump memory to file\n");
+			fclose(f);
+			unlink(RAM_OUTPUT_FILE);
+			return;
+		}
+	}
+
+	printf("Memory dumped to file: %s\n", RAM_OUTPUT_FILE);
+	fclose(f);
+}
+
 int run_debugger_command(m68k_context *context, uint32_t address, char *input_buf, m68kinst inst, uint32_t after)
 {
 	char * param;
@@ -594,6 +621,9 @@ int run_debugger_command(m68k_context *context, uint32_t address, char *input_bu
 	bp_def *new_bp, **this_bp;
 	switch(input_buf[0])
 	{
+		case 'r':
+			dump_memory(context);
+			break;
 		case 'c':
 			if (input_buf[1] == 0 || input_buf[1] == 'o' && input_buf[2] == 'n')
 			{
